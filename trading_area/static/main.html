@@ -100,7 +100,7 @@ function process_next_point() {
     var lat = n.value[1]
     var pt = new BMap.Point(lng, lat);
     geocoder.getLocation(pt, function(rs){
-        // 失败了
+        // API failed
         if (rs == null) {
             console.log('BaiduAPI failed')
             return process_next_point()
