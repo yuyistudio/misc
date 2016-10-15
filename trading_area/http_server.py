@@ -64,7 +64,7 @@ def http_server(port):
     application = tornado.web.Application([
         (r"/api", BasicHandler),
         (r"/static/(.*)", StaticHandler,)], 
-        static_path = "/Users/liyong/leon/github/trading_area/static"
+        static_path = os.path.join(os.getcwd(), "static")
     )
     application.listen(port)
     logging.info('http server serving...')
