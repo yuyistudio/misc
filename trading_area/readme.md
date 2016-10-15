@@ -26,9 +26,9 @@ python http_server.py &
 
 使用上述命令启动一个HTTP服务器。
 
-> Visit `localhost:8877/static/main.html` in your browser, and click the button `start`.
+> Visit `localhost:8877/static/main.html` in your browser, and click the button `start`. Multiple clicks on the `start` button boost the process, with 10 more concurrency per click.
 
-使用浏览器访问网址 `localhost:8877/static/main.html`，并点击页面上的“开始”按钮。
+使用浏览器访问网址 `localhost:8877/static/main.html`，并点击页面上的“开始”按钮。多次点击`开始`按钮可以加速处理，每点一次就会增加10个并发请求。
 
 > Visit `localhost:8877/api?action=dump` in your browser. This step will command the HTTP server to dump all the information to your disk.
 
