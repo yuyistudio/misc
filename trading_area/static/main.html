@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+<title>商圈获取</title>
+<script typet="text/javascript" src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.3"></script>
+</head>
+<body>
+<input type="button" value="开始获取商圈" onclick="start()" />
+<div id="result">ready</div>
+</body>
+</html>
+<script type="text/javascript">
+var myGeo = new BMap.Geocoder();
+function* gen_points(){
+    var slng = 116.244155
+    var slat = 39.809484
+    var elng = 116.485044
+    var elat = 40.059773
+    var step = 100 * 0.00001
+    console.log((elng - slng) / step + ' x ' + (elat - slat) / step)
+    //return
+    var MAX_COUNT = 100
+    for (var lng = slng; lng < elng; lng += step) {
+        for (var lat = slat; lat < elat; lat += step) {
+            yield [lng, lat]
+        }
+    }
+    console.log('position generator done')
+}
+function start(){
+    /*
+    counter = 0
+    console.log('start')
+    var generator = gen_points()
+    while (true){
+        var r = generator.next()
+        if (r.done){break}
+        counter += 1
+    }
+    console.log(counter)
+    return
+    */
+    process_next_point(gen_points(), 0)
+}
+function process_next_point(generator, counter) {
+    var n = generator.next()
+    if (n.done){
+        console.log('all done')
+        return
+    }
+    var lng = n.value[0]
+    var lat = n.value[1]
+    var pt = new BMap.Point(lng, lat);
+    myGeo.getLocation(pt, function(rs){
+        //console.log(rs)
+        var key = rs.point.lng + '_' + rs.point.lat
+        var value = rs.business
+        //console.log(key + " => " + value)
+        if (value == "") {
+            return process_next_point(generator, counter + 1)
+        }
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/api?key=" + key + "&value=" + value,
+            error : function(e){
+                $('#result').html('error: ')
+                console.log(e)
+            },
+            success : function(e) {
+                if (counter % 10 == 0){
+                    $('#result').html('counter: ' + counter)
+                }
+            },
+            complete : function(e){
+                process_next_point(generator, counter + 1)
+            }
+        });
+    });
+}
+</script>
