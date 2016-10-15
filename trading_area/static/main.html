@@ -7,11 +7,12 @@
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.3"></script>
 </head>
 <body>
-<input type="button" value="开始获取商圈" onclick="start()" />
-<div id="result">ready</div>
+<input type="button" value="开始 start" onclick="start()" />
+<div id="result">就绪 ready</div>
 </body>
 </html>
 <script type="text/javascript">
+var started = false;
 var myGeo = new BMap.Geocoder();
 function* gen_points(){
     var slng = 116.244155
@@ -30,24 +31,17 @@ function* gen_points(){
     console.log('position generator done')
 }
 function start(){
-    /*
-    counter = 0
-    console.log('start')
-    var generator = gen_points()
-    while (true){
-        var r = generator.next()
-        if (r.done){break}
-        counter += 1
+    if (started){
+        return;
     }
-    console.log(counter)
-    return
-    */
+    started = true
     process_next_point(gen_points(), 0)
 }
 function process_next_point(generator, counter) {
     var n = generator.next()
     if (n.done){
         console.log('all done')
+        $('#result').html('完成 all done')
         return
     }
     var lng = n.value[0]
@@ -66,12 +60,12 @@ function process_next_point(generator, counter) {
             dataType: "json",
             url: "/api?key=" + key + "&value=" + value,
             error : function(e){
-                $('#result').html('error: ')
+                $('#result').html('出错了! error!')
                 console.log(e)
             },
             success : function(e) {
                 if (counter % 10 == 0){
-                    $('#result').html('counter: ' + counter)
+                    $('#result').html('计数器 counter: ' + counter)
                 }
             },
             complete : function(e){
