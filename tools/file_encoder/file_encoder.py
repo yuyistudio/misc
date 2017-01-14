@@ -99,6 +99,10 @@ def check_password(passwd):
     input_md5 = m1.hexdigest() 
     return input_md5 == target_md5
 
+def output(info):
+    sys.stderr.write(info)
+    sys.stderr.write('\n')
+
 def main():
     if len(sys.argv) == 2 and sys.argv[1].startswith('c'):
         every_file(root_dir, get_file_classifier(random_rename = True), False)
@@ -108,17 +112,21 @@ def main():
             dest_path = os.path.join(root_dir, filename)
             if os.path.isdir(dest_path):
                 shutil.rmtree(dest_path)
+        output('done')
     elif len(sys.argv) == 1:
-        sys.stdout.write('password: ')
-        sys.stdout.flush()
+        sys.stderr.write('password: ')
+        sys.stderr.flush()
         passwd = raw_input()
         if not check_password(passwd):
-            print('password incorrect')
+            output('password incorrect')
             return
         config['key'] = passwd
         every_file(root_dir, file_random_rename, True)
         mkdir_p(tmp_dir)
         every_file(root_dir, file_encoder, True)
+        output('done')
+    else:
+        output('unknown error, args `%s`' % ' '.join(sys.argv))
 
 '''
 使用方法：
